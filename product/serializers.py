@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from decimal import Decimal
-from product.models import Category, Product
+from product.models import Category, Product, Review
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'description', 'product_count']
         
     # product_count = serializers.SerializerMethodField(method_name="product_count")
-    product_count = serializers.IntegerField()
+    product_count = serializers.IntegerField(read_only= True)
         
     # def get_product_count(self, category):
     #     count = Product.objects.filter(category=category).count()
@@ -37,11 +37,20 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'price', 'stock','image', 'category', 'created_at', 'updated_at']
         
         
-    category = serializers.HyperlinkedRelatedField(
-        queryset = Category.objects.all(),
-        view_name = 'view_specific_category',
-    )
+    # category = serializers.HyperlinkedRelatedField(
+    #     queryset = Category.objects.all(),
+    #     view_name = 'view_specific_category',
+    # )
     def validate_price(self, price):
         if price < 0:
             raise serializers.ValidationError("Price Could not be negative")
         return price
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'name', 'description']
+        
+    def create(self, validated_data):
+        product_id = self.context['product_id']
+        return Review.objects.create(product_id=product_id, **validated_data)
+        
