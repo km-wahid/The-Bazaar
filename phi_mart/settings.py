@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'users',
     'debug_toolbar',
     'django_filters',
+    # 'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
+   'drf_yasg',
     
 ]
 
@@ -166,3 +168,9 @@ DJOSER = {
          },
           
 }
+
+
+STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / 'media'

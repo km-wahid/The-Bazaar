@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+from product.validators import validate_file_size
+# from product.models import ProductImage
 # Create your models here.
 
 
@@ -44,3 +46,14 @@ class Review(models.Model):
     
     def __str__(self):
         return f'Reviewed by{self.user.first_name} on {self.product.name} '
+    
+    
+    
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(
+        upload_to="product/images/", validators=[validate_file_size])
+    # file = models.FileField(upload_to="product/files",
+    #                         validators=FileExtensionValidator(['pdf']))

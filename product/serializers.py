@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from decimal import Decimal
-from product.models import Category, Product, Review
+from product.models import Category, Product, Review, ProductImage
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'user', 'description', 'product_count']
+        fields = ['id', 'description', 'product_count']
         
     # product_count = serializers.SerializerMethodField(method_name="product_count")
     product_count = serializers.IntegerField(read_only= True)
@@ -34,7 +35,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'price', 'stock','image', 'category', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'description', 'price', 'stock','images', 'category', 'created_at', 'updated_at']
         
         
     # category = serializers.HyperlinkedRelatedField(
@@ -55,3 +56,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         product_id = self.context['product_id']
         return Review.objects.create(product_id=product_id, **validated_data)
         
+        
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['id', 'image']

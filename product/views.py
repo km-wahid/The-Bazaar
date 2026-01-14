@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from product.models import Product, Category, Review
-from product.serializers import ProductSerializer,CategorySerializer, ReviewSerializer
+from product.models import Product, Category, Review, ProductImage
+from product.serializers import ProductSerializer,CategorySerializer, ReviewSerializer, ProductImageSerializer
 from django.db.models import Count
 from rest_framework import status
 from rest_framework.views import APIView
@@ -15,6 +15,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from product.paginations import DeafultPagination
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.permissions import DjangoModelPermissions
+from api.permission import IsAdminOrReadOnly
+
 # Create your views here.
 
 
@@ -72,7 +74,18 @@ class ReviewViewSet(ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-    
+
+
+
+class ProductImageViewSet(ModelViewSet):
+    serializer_class = ProductImageSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def get_queryset(self):
+        return ProductImage.objects.filter(product_id=self.kwargs.get('product_pk'))
+
+    def perform_create(self, serializer):
+        serializer.save(product_id=self.kwargs.get('product_pk'))    
     
         
     
